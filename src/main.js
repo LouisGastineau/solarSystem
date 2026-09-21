@@ -1,41 +1,32 @@
-import * as THREE from 'three';
 import { createScene } from './scene.js';
+import { createPlanetSystem } from './planets.js';
+import { PLANETS } from './data.js';
+import { createLabels } from './ui.js';
 import './style.css';
 
 function start() {
-  const { scene, camera, renderer, controls, dispose } = createScene(
-    document.querySelector('#app'),
-  );
-  const geometry = new THREE.BoxGeometry(1.8, 1.8, 1.8);
-  const material = new THREE.MeshStandardMaterial({
-    color: '#75c6ff',
-    roughness: 0.35,
-    metalness: 0.15,
-  });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-
+  const container = document.querySelector('#app');
+  const world = createScene(container);
+  const system = createPlanetSystem(world.scene, PLANETS);
+  const labels = createLabels(container, system.planets);
   let previousTime;
-  renderer.setAnimationLoop((time) => {
-    // Rotation indépendante du nombre d'images par seconde.
-    // Le plafonnement évite un saut au retour d'un onglet inactif.
-    const delta = previousTime === undefined
-      ? 0
-      : Math.min((time - previousTime) / 1000, 0.05);
+
+  world.renderer.setAnimationLoop((time) => {
+    // Rotation indépendante du débit d'images, sans saut au retour d'onglet.
+    const delta = previousTime === undefined ? 0 : Math.min((time - previousTime) / 1000, 0.05);
     previousTime = time;
-    cube.rotation.x += delta * 0.25;
-    cube.rotation.y += delta * 0.45;
-    controls.update();
-    renderer.render(scene, camera);
+    system.update(delta);
+    world.controls.update();
+    world.renderer.render(world.scene, world.camera);
+    labels.update(world.camera);
   });
 
-  // Libération des ressources lors du remplacement du module par Vite.
   if (import.meta.hot) {
     import.meta.hot.dispose(() => {
-      renderer.setAnimationLoop(null);
-      geometry.dispose();
-      material.dispose();
-      dispose();
+      world.renderer.setAnimationLoop(null);
+      labels.dispose();
+      system.dispose();
+      world.dispose();
     });
   }
 }
