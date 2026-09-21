@@ -40,13 +40,28 @@ export function createPlanet(data, initialAngle = 0) {
 }
 
 export function createPlanetSystem(scene, definitions) {
-  const planets = definitions.map((data, index) => {
-    const planet = createPlanet(data, index * 2.4 + 0.6);
+  // Le tableau reste le même objet pour l'animation et le raycasting.
+  const planets = [];
+  function add(data, custom = false) {
+    const planet = createPlanet({ ...data }, planets.length * 2.4 + 0.6);
+    planet.custom = custom;
     scene.add(planet.mesh, planet.orbit);
+    planets.push(planet);
     return planet;
-  });
+  }
+
+  function remove(planet) {
+    const index = planets.indexOf(planet);
+    if (index === -1 || !planet.custom) return;
+    planets.splice(index, 1);
+    planet.dispose();
+  }
+
+  definitions.forEach((data) => add(data));
   return {
     planets,
+    addCustom: (data) => add(data, true),
+    remove,
     update: (delta) => planets.forEach((planet) => planet.update(delta)),
     dispose: () => planets.forEach((planet) => planet.dispose()),
   };

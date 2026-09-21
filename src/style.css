@@ -40,6 +40,38 @@ h1 span { color: #edc17e; }
 .follow-status span { display: inline-block; width: 5px; height: 5px; margin-right: 7px; background: currentColor; border-radius: 50%; }
 .panel-help { margin: 0; color: #8493aa; font-size: 11px; line-height: 1.6; }
 .is-following .controls-help { visibility: hidden; }
+.add-planet-button { position: absolute; top: 166px; left: clamp(22px, 4vw, 52px); padding: 11px 16px; border: 1px solid #ffffff30; border-radius: 24px; background: #101b2ce8; color: #e8eef8; font: inherit; font-size: 12px; cursor: pointer; }
+.add-planet-button:hover { background: #22344c; }
+.planet-editor { width: min(500px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 28px; border: 1px solid #ffffff25; border-radius: 22px; background: #0d1524; color: #edf3ff; box-shadow: 0 24px 100px #0009; }
+.planet-editor::backdrop { background: #020611b8; backdrop-filter: blur(5px); }
+.editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.editor-heading h2 { margin: 0; font-size: 23px; font-weight: 500; letter-spacing: -0.025em; }
+.close-editor { border: 0; border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0; background: #ffffff0c; color: #edf3ff; font-size: 24px; cursor: pointer; }
+.editor-intro, .session-note, .empty-planets { color: #93a3bb; font-size: 12px; line-height: 1.6; }
+.editor-intro { margin: 12px 0 22px; }
+.planet-editor form { display: grid; gap: 16px; }
+.planet-editor label { display: grid; gap: 8px; min-width: 0; color: #ccd7e7; font-size: 12px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.planet-editor input, .planet-editor textarea { width: 100%; min-width: 0; border: 1px solid #ffffff25; border-radius: 9px; background: #070e1a; color: #f0f5ff; padding: 10px 12px; font: inherit; font-size: 14px; }
+.planet-editor textarea { resize: vertical; min-height: 78px; }
+.planet-editor input[type="color"] { height: 41px; padding: 5px; cursor: pointer; }
+.planet-editor small { color: #8494ad; font-size: 10px; }
+.planet-editor :focus-visible, .add-planet-button:focus-visible, .delete-button:focus-visible { outline: 2px solid #edc17e; outline-offset: 3px; }
+.submit-planet { padding: 12px; border: 0; border-radius: 10px; background: #e6c392; color: #1b1720; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.submit-planet:hover { background: #f5d8b0; }
+.form-error { margin: 0; color: #ffaeb7; font-size: 12px; line-height: 1.5; }
+.form-error:empty { display: none; }
+.session-note { margin: 16px 0 22px; font-size: 11px; }
+.custom-planets { padding-top: 18px; border-top: 1px solid #ffffff16; }
+.custom-planets h3 { margin: 0; font-size: 13px; font-weight: 500; }
+.custom-planets ul { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+.custom-planets li { display: flex; align-items: center; gap: 12px; }
+.observe-planet { min-width: 0; flex: 1; overflow-wrap: anywhere; text-align: left; background: #ffffff08; padding: 10px; border: 1px solid #ffffff14; border-radius: 8px; color: #e1e9f5; font: inherit; font-size: 12px; cursor: pointer; }
+.observe-planet::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--planet-color); }
+.delete-button { border: 1px solid #fa9ca433; border-radius: 8px; padding: 9px 12px; color: #f4a4ad; background: #f17a8709; font: inherit; font-size: 11px; cursor: pointer; }
+.delete-button:hover { background: #f17a8720; }
+.description-panel .delete-button { margin-top: 20px; width: 100%; }
+.description-panel h2, .planet-description { overflow-wrap: anywhere; }
 @media (max-width: 1000px) and (min-width: 701px) {
   .description-panel { width: 230px; right: 18px; padding: 18px; }
 }
@@ -49,6 +81,8 @@ h1 span { color: #edc17e; }
   .controls-help { max-width: 360px; line-height: 1.7; gap: 5px; }
   .subtitle { font-size: 11px; }
   .planet-label { font-size: 9px; }
+  .add-planet-button { top: 142px; }
+  .planet-editor { padding: 20px; }
   .description-panel { top: auto; bottom: 18px; left: 18px; right: 18px; width: auto; max-height: 35dvh; padding: 18px; }
   .description-panel h2 { font-size: 24px; margin: 12px 0 8px; }
   .panel-eyebrow, .planet-swatch, .panel-help { display: none; }

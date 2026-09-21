@@ -133,7 +133,10 @@ export function createInteraction(world, planets, onSelect) {
   }
 
   function cancel(event) { activePointers.delete(event.pointerId); gesture = null; }
-  function keyDown(event) { if (event.key === 'Escape') reset(); }
+  function keyDown(event) {
+    // Échap ferme d'abord le formulaire modal, sans interrompre le suivi.
+    if (event.key === 'Escape' && !document.querySelector('dialog[open]')) reset();
+  }
   const events = { pointerdown: pointerDown, pointermove: pointerMove,
     pointerup: pointerUp, pointercancel: cancel, lostpointercapture: cancel };
   Object.entries(events).forEach(([name, handler]) => canvas.addEventListener(name, handler));
@@ -145,5 +148,7 @@ export function createInteraction(world, planets, onSelect) {
     canvas.style.cursor = '';
   }
 
-  return { update, reset, dispose };
+  return { update, reset, select, dispose,
+    forget: (planet) => { if (selected === planet) reset(); },
+  };
 }
