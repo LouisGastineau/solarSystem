@@ -1,0 +1,24 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #eef4ff;
+  background: #080c18;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+#app { width: 100%; height: 100dvh; }
+canvas { display: block; touch-action: none; }
+
+.intro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: clamp(20px, 4vw, 48px);
+  max-width: 560px;
+  pointer-events: none;
+}
+
+.intro p { color: #a9b8d1; line-height: 1.6; }
+.intro p:first-child { font-size: 12px; letter-spacing: 0.16em; }
+h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 600; }
