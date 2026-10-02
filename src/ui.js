@@ -57,6 +57,13 @@ export function createDescriptionPanel(container, onReturn, onDelete) {
     </div>
     <p class="follow-status"><span></span> Suivi de l’orbite actif</p>
     <p class="panel-help">Glissez pour observer la planète. Utilisez la molette pour zoomer.</p>
+    <section class="planet-image" aria-label="Image de la planète">
+      <label>Image de surface<input class="image-input" type="file" accept="image/png,image/jpeg,image/webp"></label>
+      <p class="image-help">PNG, JPEG ou WebP · 10 Mo maximum. Une carte panoramique 2:1 épouse mieux la sphère.</p>
+      <p class="image-status" role="status"></p>
+      <button class="remove-image return-button" type="button" hidden>Retirer l’image</button>
+      <p class="image-help">L’image reste sur votre appareil et disparaît au rechargement.</p>
+    </section>
     <button class="delete-button" type="button" hidden>Supprimer cette planète</button>`;
   const button = panel.querySelector('button');
   const title = panel.querySelector('h2');
@@ -65,13 +72,54 @@ export function createDescriptionPanel(container, onReturn, onDelete) {
   const originalBadge = badge.innerHTML;
   const deleteButton = panel.querySelector('.delete-button');
   let current = null;
+  const imageInput = panel.querySelector('.image-input');
+  const imageStatus = panel.querySelector('.image-status');
+  const removeImageButton = panel.querySelector('.remove-image');
+  let imageEdit = 0;
+
+  function refreshImage() {
+    imageInput.value = '';
+    imageInput.disabled = false;
+    removeImageButton.hidden = !current?.imageName;
+    imageStatus.textContent = current?.imageName || 'Couleur unie';
+  }
+
+  async function uploadImage() {
+    const file = imageInput.files[0];
+    const planet = current;
+    if (!file || !planet) return;
+    const edit = ++imageEdit;
+    imageInput.disabled = true;
+    imageStatus.textContent = 'Chargement de l’image…';
+    try {
+      await planet.setImage(file);
+      if (edit === imageEdit && current === planet) refreshImage();
+    } catch (error) {
+      if (edit === imageEdit && current === planet) imageStatus.textContent = error.message;
+    } finally {
+      if (edit === imageEdit && current === planet) {
+        imageInput.value = '';
+        imageInput.disabled = false;
+      }
+    }
+  }
+
+  function removeImage() {
+    imageEdit += 1;
+    current?.removeImage();
+    refreshImage();
+  }
+  imageInput.addEventListener('change', uploadImage);
+  removeImageButton.addEventListener('click', removeImage);
   function deleteCurrent() { if (current?.custom) onDelete(current); }
   deleteButton.addEventListener('click', deleteCurrent);
   button.addEventListener('click', onReturn);
   container.appendChild(panel);
 
   function show(planet) {
+    imageEdit += 1;
     current = planet;
+    refreshImage();
     deleteButton.hidden = !planet?.custom;
     panel.hidden = !planet;
     document.body.classList.toggle('is-following', Boolean(planet));
@@ -92,6 +140,8 @@ export function createDescriptionPanel(container, onReturn, onDelete) {
   function dispose() {
     button.removeEventListener('click', onReturn);
     deleteButton.removeEventListener('click', deleteCurrent);
+    imageInput.removeEventListener('change', uploadImage);
+    removeImageButton.removeEventListener('click', removeImage);
     show(null);
     panel.remove();
   }

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { loadPlanetTexture } from './textures.js';
 
 function createOrbit(distance) {
   const points = Array.from({ length: 256 }, (_, index) => {
@@ -20,6 +21,31 @@ export function createPlanet(data, initialAngle = 0) {
   mesh.name = data.name;
   const orbit = createOrbit(data.distance);
   let angle = initialAngle;
+  let imageRequest = 0;
+  let disposed = false;
+  let imageName = '';
+
+  function removeImage() {
+    imageRequest += 1;
+    mesh.material.map?.dispose();
+    mesh.material.map = null;
+    mesh.material.color.set(data.color);
+    mesh.material.needsUpdate = true;
+    imageName = '';
+  }
+
+  async function setImage(file) {
+    const request = ++imageRequest;
+    const texture = await loadPlanetTexture(file, data.color);
+    // Une suppression ou un nouvel import peut intervenir pendant le décodage.
+    if (disposed || request !== imageRequest) { texture.dispose(); return false; }
+    mesh.material.map?.dispose();
+    mesh.material.map = texture;
+    mesh.material.color.set('#ffffff');
+    mesh.material.needsUpdate = true;
+    imageName = file.name;
+    return true;
+  }
 
   function update(delta) {
     angle = (angle + data.speed * delta) % (Math.PI * 2);
@@ -28,6 +54,8 @@ export function createPlanet(data, initialAngle = 0) {
   }
 
   function dispose() {
+    disposed = true;
+    removeImage();
     [mesh, orbit].forEach((object) => {
       object.removeFromParent();
       object.geometry.dispose();
@@ -36,7 +64,9 @@ export function createPlanet(data, initialAngle = 0) {
   }
 
   update(0);
-  return { data, mesh, orbit, update, dispose };
+  return { data, mesh, orbit, update, dispose, setImage, removeImage,
+    get imageName() { return imageName; },
+  };
 }
 
 export function createPlanetSystem(scene, definitions) {
