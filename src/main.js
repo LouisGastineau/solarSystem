@@ -1,16 +1,17 @@
 import { createScene } from './scene.js';
 import { createPlanetSystem } from './planets.js';
-import { PLANETS } from './data.js';
-import { createLabels, createDescriptionPanel, createPlanetEditor } from './ui.js';
+import { PLANETS, MOONS } from './data.js';
+import { createLabels, createDescriptionPanel, createPlanetEditor, createNameSwitch } from './ui.js';
 import { createInteraction } from './interaction.js';
 import './style.css';
 
 function start() {
   const container = document.querySelector('#app');
   const world = createScene(container);
-  const system = createPlanetSystem(world.scene, PLANETS);
+  const system = createPlanetSystem(world.scene, PLANETS, MOONS);
   const labels = createLabels(container, system.planets);
-  const panel = createDescriptionPanel(container, () => interaction.reset(), removePlanet);
+  const nameSwitch = createNameSwitch(container, labels.setVisible);
+  const panel = createDescriptionPanel(container, () => interaction.reset(), removePlanet, system);
   const interaction = createInteraction(world, system.planets, (planet) => {
     panel.show(planet);
     labels.select(planet);
@@ -19,8 +20,9 @@ function start() {
     onAdd: addPlanet, onSelect: interaction.select, onDelete: removePlanet,
   });
 
-  function addPlanet(data) {
+  function addPlanet(data, texture = null, imageName = '') {
     const planet = system.addCustom(data);
+    if (texture) planet.setTexture(texture, imageName);
     labels.add(planet);
     editor.add(planet);
     updateCount();
@@ -62,6 +64,7 @@ function start() {
     import.meta.hot.dispose(() => {
       world.renderer.setAnimationLoop(null);
       labels.dispose();
+      nameSwitch.dispose();
       interaction.dispose();
       panel.dispose();
       editor.dispose();

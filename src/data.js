@@ -12,3 +12,14 @@ export const PLANETS = [
   { name: 'Uranus', radius: 1.3, distance: 38, speed: 0.043, color: '#8ed8da', description: 'Uranus est une géante de glaces. Elle est la troisième plus grande planète du système solaire.' },
   { name: 'Neptune', radius: 1.25, distance: 45, speed: 0.032, color: '#5b7ee1', description: 'Neptune est une géante de glaces. Elle est la planète la plus éloignée du Soleil.' },
 ];
+
+// Sélection de lunes, non exhaustive. Valeurs visuelles hors échelle.
+// Noms et rattachements : https://ssd.jpl.nasa.gov/sats/discovery.html
+export const MOONS = {
+  Terre: ['Lune'],
+  Mars: ['Phobos', 'Déimos'],
+  Jupiter: ['Io', 'Europe', 'Ganymède', 'Callisto'],
+  Saturne: ['Titan'],
+  Uranus: ['Titania'],
+  Neptune: ['Triton'],
+};
